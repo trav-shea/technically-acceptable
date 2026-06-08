@@ -1,8 +1,6 @@
-name: Math (for fun)
-order: 6
+name: Learning Math
+order: 7
 label: THEORY
-status: active
-summary: Linear algebra, probability, and number theory worked from scratch.
-intro: >-
-  The fun kind: build the intuition by working it by hand before reaching for a
-  library. Proof-light, example-heavy.
+status: soon
+summary: "Working through linear algebra, probability, and number theory from scratch."
+intro: "Working through linear algebra, probability, and number theory from scratch."

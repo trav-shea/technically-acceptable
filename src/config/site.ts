@@ -56,9 +56,9 @@ export const site: SiteIdentity = {
   coordinate: '39.4668°N 76.2916°W', // Abingdon, MD
   status: 'OPERATIONAL',
   footerHandle: 'Imposter Syndrome',
-  lede: 'Replicable procedures for building and securing real systems.',
+  lede: 'Tech projects and guides, built in the open and made to replicate.',
   subhead:
-    'Not a blog. Each entry is a standalone how-to you can run end to end — read it, replicate it, verify it. Pick a subject to open its index.',
+    'Not a traditional blog. Each project below is set up for you to replicate what I built and shows the process I used to learn it. Pick a subject to start.',
   links: {
     github: '', // TODO: set when the public repo URL exists (Phase 4)
     substack: '', // TODO: set if/when a top-level Substack link is wanted

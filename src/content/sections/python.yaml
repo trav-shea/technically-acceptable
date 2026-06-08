@@ -1,8 +1,6 @@
-name: Python
-order: 2
+name: Learning Python
+order: 5
 label: SOFTWARE
 status: in-progress
-summary: Automation, tooling, and data work — from one-off scripts to packaged CLIs.
-intro: >-
-  Small, sharp programs that do one job well. Each entry starts from a real
-  problem and ends with code you can run, test, and reuse.
+summary: "Learning Python by building tools I actually use."
+intro: "Learning Python by building tools I actually use."

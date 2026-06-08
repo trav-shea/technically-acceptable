@@ -1,8 +1,6 @@
-name: AI / ML
-order: 5
+name: AI Projects
+order: 4
 label: MODELS
-status: soon
-summary: "Practical models: training, evaluation, and deployment without the hype."
-intro: >-
-  Models as tools, measured honestly. What they do, where they fail, and how to
-  tell the difference.
+status: in-progress
+summary: "Learning to use AI, design AI workflows, and run AI agents."
+intro: "Learning to use AI, design AI workflows, and run AI agents."
