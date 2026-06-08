@@ -5,11 +5,15 @@
 // the top StatusBar, the four corner registration ticks, the page body via
 // <slot/>, the footer, and the minimal client script (clock + code-copy +
 // mobile-TOC toggle).
-// Does NOT: know anything about page content — pages fill the <slot/>.
-// Fails loudly: `title` is a required prop with no default, so a page that
-// forgets to set a <title> won't silently ship a blank one — the build errors.
+// Does NOT: know page content — pages fill <slot/>.
+//
+// The footer's right-hand meta varies by tier (Home shows an entry total;
+// Section/Entry show breadcrumb-style links), so it's a named slot. Its
+// DEFAULT is the derived Home meta: the entry total is counted from content,
+// never typed.
 import { site } from '../config/site';
-import StatusBar from '../components/StatusBar.astro';
+import StatusBar, { type StatusSegment } from '../components/StatusBar.astro';
+import { getVisibleEntries } from '../lib/content';
 import '../styles/field-notes.css';
 
 interface Props {
@@ -17,9 +21,15 @@ interface Props {
   title: string;
   /** Value for <body data-screen-label> (mirrors the prototype). */
   screenLabel?: string;
+  /** Per-tier status strip; omitted = the Home default in StatusBar. */
+  statusbar?: { brandHref?: string; segments?: StatusSegment[] };
 }
 
-const { title, screenLabel } = Astro.props;
+const { title, screenLabel, statusbar } = Astro.props;
+
+// Derived site-wide footer total (visible entries in this build).
+const totalEntries = (await getVisibleEntries()).length;
+const entriesWord = totalEntries === 1 ? 'ENTRY' : 'ENTRIES';
 ---
 
 <!DOCTYPE html>
@@ -30,7 +40,7 @@ const { title, screenLabel } = Astro.props;
     <title>{title}</title>
   </head>
   <body data-screen-label={screenLabel}>
-    <StatusBar />
+    <StatusBar brandHref={statusbar?.brandHref} segments={statusbar?.segments} />
 
     <span class="tick tl"></span><span class="tick tr"></span>
     <span class="tick bl"></span><span class="tick br"></span>
@@ -41,13 +51,11 @@ const { title, screenLabel } = Astro.props;
       <div class="frame">
         <span class="handle">&mdash; <span class="em">{site.footerHandle}</span></span>
         <div class="foot-meta">
-          {/* Phase 0 literals — these three become derived from content in Phase 1
-              (total entry count) or stay static truths (NO TRACKERS / BUILT TO LAST).
-              The prototype's "21 ENTRIES" is internally inconsistent with its own
-              card counts (6+4+3=13); the real value gets derived in Phase 1. */}
-          <span>21 ENTRIES</span>
-          <span>NO TRACKERS</span>
-          <span>BUILT TO LAST</span>
+          <slot name="foot-meta">
+            <span>{totalEntries} {entriesWord}</span>
+            <span>NO TRACKERS</span>
+            <span>BUILT TO LAST</span>
+          </slot>
         </div>
       </div>
     </footer>

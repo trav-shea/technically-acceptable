@@ -1,0 +1,8 @@
+name: OSINT
+order: 4
+label: RECON
+status: soon
+summary: Open-source collection and analysis tradecraft, done responsibly.
+intro: >-
+  Finding what is already public, and reasoning about it carefully. Method and
+  ethics, not shortcuts.

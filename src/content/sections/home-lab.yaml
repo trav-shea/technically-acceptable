@@ -1,0 +1,9 @@
+name: Home Lab
+order: 1
+label: NET / INFRA
+status: active
+summary: Network design, segmentation, and self-hosted services on real hardware.
+intro: >-
+  A single mini-PC, a managed switch, and an access point — turned into a
+  properly segmented, observable network. Work the lessons in order; each one
+  assumes the hardware and addressing decided in the lessons before it.

@@ -1,20 +1,54 @@
 ---
-// StatusBar — the sticky top status strip on the Home page.
+// StatusBar — the sticky top status strip.
 //
-// Renders five segments from site.ts. The last segment holds the
-// [data-clock] placeholder that public/field-notes.js fills with a live
-// UTC time once per second on the client.
-//
-// Phase 0 renders the Home variant only. Section/Entry pages use different
-// middle segments (SECTION / ENTRY / READ) — that variation is added in
-// Phase 1 when those pages exist, rather than guessed at now.
+// The first segment is the brand (a link back home on inner pages, plain text
+// on Home). The middle segments vary by tier and are passed in; if none are
+// given it defaults to the Home strip built from site.ts. The final UTC
+// segment is always present and is filled client-side by field-notes.js.
 import { site } from '../config/site';
+
+export interface StatusSegment {
+  key: string;
+  val: string;
+  /** Render the value in accent colour (e.g. STATUS). */
+  accent?: boolean;
+  /** This segment absorbs the free horizontal space. */
+  grow?: boolean;
+}
+
+interface Props {
+  /** If set, the brand badge links here (inner pages link back to "/"). */
+  brandHref?: string;
+  /** Middle segments. Omitted = the Home default below. */
+  segments?: StatusSegment[];
+}
+
+const { brandHref } = Astro.props;
+const segments: StatusSegment[] = Astro.props.segments ?? [
+  { key: 'DESIG', val: site.designation },
+  { key: 'SECTOR', val: site.coordinate, grow: true },
+  { key: 'STATUS', val: site.status, accent: true },
+];
 ---
 
 <div class="statusbar">
-  <div class="seg"><span class="dot"></span><span class="accent">{site.name}</span></div>
-  <div class="seg hide-sm"><span class="key">DESIG</span><span class="val">{site.designation}</span></div>
-  <div class="seg grow hide-sm"><span class="key">SECTOR</span><span class="val">{site.coordinate}</span></div>
-  <div class="seg hide-sm"><span class="key">STATUS</span><span class="accent">{site.status}</span></div>
+  <div class="seg">
+    <span class="dot"></span>
+    {
+      brandHref ? (
+        <a href={brandHref} class="accent">{site.name}</a>
+      ) : (
+        <span class="accent">{site.name}</span>
+      )
+    }
+  </div>
+  {
+    segments.map((s) => (
+      <div class={`seg hide-sm${s.grow ? ' grow' : ''}`}>
+        <span class="key">{s.key}</span>
+        <span class={s.accent ? 'accent' : 'val'}>{s.val}</span>
+      </div>
+    ))
+  }
   <div class="seg"><span class="key">UTC</span><span class="val" data-clock>--:--:--Z</span></div>
 </div>

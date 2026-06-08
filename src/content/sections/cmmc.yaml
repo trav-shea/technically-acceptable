@@ -1,0 +1,9 @@
+name: CMMC
+order: 3
+label: COMPLIANCE
+status: active
+summary: "Cybersecurity Maturity Model Certification: controls, scoping, and evidence."
+intro: >-
+  A working walk through CMMC the way an assessor reads it — scope first, then
+  controls, then the evidence that proves them. Generic and reproducible; no
+  real program data.

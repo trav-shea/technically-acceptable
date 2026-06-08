@@ -1,0 +1,8 @@
+name: Python
+order: 2
+label: SOFTWARE
+status: in-progress
+summary: Automation, tooling, and data work — from one-off scripts to packaged CLIs.
+intro: >-
+  Small, sharp programs that do one job well. Each entry starts from a real
+  problem and ends with code you can run, test, and reuse.

@@ -1,0 +1,8 @@
+name: AI / ML
+order: 5
+label: MODELS
+status: soon
+summary: "Practical models: training, evaluation, and deployment without the hype."
+intro: >-
+  Models as tools, measured honestly. What they do, where they fail, and how to
+  tell the difference.

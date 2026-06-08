@@ -1,25 +1,59 @@
 ---
-// Home — the index of all subjects.
+// Home — the index of all subjects, rendered from the sections collection.
 //
-// Phase 0: a faithful static reproduction of the prototype's Home.html, with
-// the identity strings swapped to the new brand (site.ts). The derived values
-// flagged below (divider count, per-card lesson tags, REV date) are Phase 0
-// literals — Phase 1 replaces them with counts computed from content
-// collections at build time. No new layout or design has been introduced.
+// Every number here is DERIVED at build time, never typed:
+//   - per-card lesson count    = visible entries in that section
+//   - divider "NN / MM ACTIVE" = total sections / non-"soon" sections
+//   - masthead REV             = newest entry date across the site
+// Adding a section .yaml or an entry .mdx changes these with no edits here.
 import Base from '../layouts/Base.astro';
 import { site } from '../config/site';
+import { getSections, getVisibleEntries, entriesInSection, pad2, revString } from '../lib/content';
+
+const sections = await getSections();
+const entries = await getVisibleEntries();
+
+const totalSections = sections.length;
+// "Active" in the divider means live (not coming-soon) — reproduces the
+// prototype's "4 of 6" (active + in-progress, excluding the two "soon" cards).
+const activeSections = sections.filter((s) => s.data.status !== 'soon').length;
+const rev = revString(entries);
+
+const cards = sections.map((section, i) => {
+  const count = entriesInSection(entries, section.id).length;
+  const isSoon = section.data.status === 'soon';
+  return {
+    indexLabel: pad2(i + 1),
+    name: section.data.name,
+    summary: section.data.summary,
+    label: section.data.label,
+    isSoon,
+    // Soon cards aren't links — no section page is generated for them.
+    href: isSoon ? null : `/${section.id}/`,
+    tagText:
+      section.data.status === 'active'
+        ? `${count} Lesson${count === 1 ? '' : 's'}`
+        : section.data.status === 'in-progress'
+          ? 'In Progress'
+          : 'Coming Soon',
+    tagClass:
+      section.data.status === 'active'
+        ? 'tag active'
+        : section.data.status === 'in-progress'
+          ? 'tag progress'
+          : 'tag',
+  };
+});
 ---
 
 <Base title={`${site.name} — Index`} screenLabel="HOME">
   <main class="frame">
-    <!-- masthead -->
     <header class="masthead">
       <div class="designation">
         <span class="wordmark">{site.wordmarkParts[0]}<span class="em">·</span>{site.wordmarkParts[1]}</span>
         <span class="meta">
           <span>{site.designationLine}</span>
-          {/* Phase 0 literal — REV date becomes max(entry dates) in Phase 1. */}
-          <span>REV 2026.06</span>
+          <span>REV {rev ?? '—'}</span>
         </span>
       </div>
 
@@ -27,78 +61,31 @@ import { site } from '../config/site';
       <p class="subhead">{site.subhead}</p>
     </header>
 
-    <!-- subjects -->
     <div class="divider">
       <span class="label">Subjects</span>
-      {/* Phase 0 literal — "total / active" gets derived from the sections
-          collection in Phase 1. */}
-      <span class="count mono">06 / 04 ACTIVE</span>
+      <span class="count mono">{pad2(totalSections)} / {pad2(activeSections)} ACTIVE</span>
     </div>
 
     <section class="grid">
-      <!-- Phase 0: card markup reproduced from the prototype. In Phase 1 these
-           render from the `sections` collection and the "N Lessons" tags become
-           derived entry counts. The Home Lab card links to its future route
-           (/home-lab/), which is built in Phase 1. -->
-      <a class="card" href="/home-lab/">
-        <div class="card-index"><span>01</span><span class="card-go">&rarr;</span></div>
-        <div class="card-name">Home Lab</div>
-        <p class="card-desc">Network design, segmentation, and self-hosted services on real hardware.</p>
-        <div class="card-foot">
-          <span class="tag active">6 Lessons</span>
-          <span class="label">NET / INFRA</span>
-        </div>
-      </a>
-
-      <div class="card">
-        <div class="card-index"><span>02</span><span class="card-go">&rarr;</span></div>
-        <div class="card-name">Python</div>
-        <p class="card-desc">Automation, tooling, and data work &mdash; from one-off scripts to packaged CLIs.</p>
-        <div class="card-foot">
-          <span class="tag progress">In Progress</span>
-          <span class="label">SOFTWARE</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-index"><span>03</span><span class="card-go">&rarr;</span></div>
-        <div class="card-name">CMMC</div>
-        <p class="card-desc">Cybersecurity Maturity Model Certification: controls, scoping, and evidence.</p>
-        <div class="card-foot">
-          <span class="tag active">4 Lessons</span>
-          <span class="label">COMPLIANCE</span>
-        </div>
-      </div>
-
-      <div class="card soon">
-        <div class="card-index"><span>04</span></div>
-        <div class="card-name">OSINT</div>
-        <p class="card-desc">Open-source collection and analysis tradecraft, done responsibly.</p>
-        <div class="card-foot">
-          <span class="tag">Coming Soon</span>
-          <span class="label">RECON</span>
-        </div>
-      </div>
-
-      <div class="card soon">
-        <div class="card-index"><span>05</span></div>
-        <div class="card-name">AI / ML</div>
-        <p class="card-desc">Practical models: training, evaluation, and deployment without the hype.</p>
-        <div class="card-foot">
-          <span class="tag">Coming Soon</span>
-          <span class="label">MODELS</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-index"><span>06</span><span class="card-go">&rarr;</span></div>
-        <div class="card-name">Math&nbsp;(for fun)</div>
-        <p class="card-desc">Linear algebra, probability, and number theory worked from scratch.</p>
-        <div class="card-foot">
-          <span class="tag active">3 Lessons</span>
-          <span class="label">THEORY</span>
-        </div>
-      </div>
+      {
+        cards.map((card) => {
+          const Tag = card.href ? 'a' : 'div';
+          return (
+            <Tag class={card.isSoon ? 'card soon' : 'card'} href={card.href}>
+              <div class="card-index">
+                <span>{card.indexLabel}</span>
+                {!card.isSoon && <span class="card-go">&rarr;</span>}
+              </div>
+              <div class="card-name">{card.name}</div>
+              <p class="card-desc">{card.summary}</p>
+              <div class="card-foot">
+                <span class={card.tagClass}>{card.tagText}</span>
+                <span class="label">{card.label}</span>
+              </div>
+            </Tag>
+          );
+        })
+      }
     </section>
   </main>
 </Base>

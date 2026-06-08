@@ -1,0 +1,8 @@
+name: Math (for fun)
+order: 6
+label: THEORY
+status: active
+summary: Linear algebra, probability, and number theory worked from scratch.
+intro: >-
+  The fun kind: build the intuition by working it by hand before reaching for a
+  library. Proof-light, example-heavy.

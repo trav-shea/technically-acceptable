@@ -1,0 +1,129 @@
+---
+// Entry / article page — one writeup.
+//
+// Static paths come from the visible entries (draft:true excluded in prod via
+// getVisibleEntries). The sidebar TOC is the section's sibling entries (the
+// current one marked), and prev/next is derived by pager.ts from `order`.
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { site } from '../../config/site';
+import { getSections, getVisibleEntries, entriesInSection, pad2 } from '../../lib/content';
+import { formatRev } from '../../lib/counts';
+import { getPager, type PagerItem } from '../../lib/pager';
+
+export async function getStaticPaths() {
+  const sections = await getSections();
+  const entries = await getVisibleEntries();
+  const sectionById = new Map(sections.map((s) => [s.id, s]));
+
+  return entries.map((entry) => {
+    const section = sectionById.get(entry.data.section.id)!;
+    return {
+      params: { section: section.id, entry: entry.id },
+      props: { entry, section, siblings: entriesInSection(entries, section.id) },
+    };
+  });
+}
+
+const { entry, section, siblings } = Astro.props;
+const { Content } = await render(entry);
+
+const kicker = entry.data.kicker ?? `${section.data.name} — Lesson ${pad2(entry.data.order)}`;
+const rev = formatRev(entry.data.updated ?? entry.data.date);
+const entryCode = `${pad2(section.data.order)}.${pad2(entry.data.order)}`;
+
+const statusLabel: Record<string, string> = {
+  published: 'COMPLETE',
+  'in-progress': 'IN PROGRESS',
+  draft: 'DRAFT',
+};
+
+const pagerItems: PagerItem[] = siblings.map((s) => ({
+  slug: s.id,
+  title: s.data.title,
+  order: s.data.order,
+}));
+const { prev, next } = getPager(pagerItems, entry.id);
+
+const statusbar = {
+  brandHref: '/',
+  segments: [
+    { key: 'ENTRY', val: `${entryCode} / ${entry.data.title.toUpperCase()}` },
+    { key: 'READ', val: `${entry.data.minutes} MIN`, grow: true },
+    { key: 'STATUS', val: statusLabel[entry.data.status], accent: true },
+  ],
+};
+---
+
+<Base
+  title={`${entry.data.title} — ${section.data.name} — ${site.name}`}
+  screenLabel={`LESSON / ${entry.data.title.toUpperCase()}`}
+  statusbar={statusbar}
+>
+  <Fragment slot="foot-meta">
+    <a href={`/${section.id}/`}>&larr; {section.data.name.toUpperCase()} INDEX</a>
+    <span>ENTRY {entryCode} / {entry.data.title.toUpperCase()}</span>
+    <span>REV {rev}</span>
+  </Fragment>
+
+  <main class="frame">
+    <nav class="crumb">
+      <a href="/">Home</a>
+      <span class="sep">/</span>
+      <a href={`/${section.id}/`}>{section.data.name}</a>
+      <span class="sep">/</span>
+      <span class="here">{entry.data.title}</span>
+    </nav>
+
+    <div class="doc">
+      <aside class="doc-side" data-open="false">
+        <span class="label side-label">Section {pad2(section.data.order)} / {section.data.name}</span>
+        <button class="side-toggle" type="button">
+          <span>{pad2(entry.data.order)} &middot; {entry.data.title}</span><span class="chev">&darr;</span>
+        </button>
+        <ol class="toc">
+          {
+            siblings.map((s) =>
+              s.id === entry.id ? (
+                <li><span class="current">{s.data.title}</span></li>
+              ) : (
+                <li><a href={`/${section.id}/${s.id}/`}>{s.data.title}</a></li>
+              ),
+            )
+          }
+        </ol>
+      </aside>
+
+      <article class="article">
+        <span class="label accent doc-kicker">{kicker}</span>
+        <h1>{entry.data.title}</h1>
+        <p class="standfirst">{entry.data.standfirst}</p>
+
+        <Content />
+
+        <nav class="pager">
+          {
+            prev ? (
+              <a class="prev" href={`/${section.id}/${prev.slug}/`}>
+                <span class="pg-dir">&larr; Prev &middot; {pad2(prev.order)}</span>
+                <span class="pg-title">{prev.title}</span>
+              </a>
+            ) : (
+              <span />
+            )
+          }
+          {
+            next ? (
+              <a class="next" href={`/${section.id}/${next.slug}/`}>
+                <span class="pg-dir">Next &middot; {pad2(next.order)} &rarr;</span>
+                <span class="pg-title">{next.title}</span>
+              </a>
+            ) : (
+              <span />
+            )
+          }
+        </nav>
+      </article>
+    </div>
+  </main>
+</Base>

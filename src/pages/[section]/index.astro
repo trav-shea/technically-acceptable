@@ -1,0 +1,107 @@
+---
+// Section landing — one subject's ordered list of entries.
+//
+// Static paths are generated for every section EXCEPT "soon" ones (which have
+// no page, matching the un-linked cards on Home). Lesson count and "Min Total"
+// are derived from the section's visible entries.
+import Base from '../../layouts/Base.astro';
+import { site } from '../../config/site';
+import { getSections, getVisibleEntries, entriesInSection, pad2 } from '../../lib/content';
+import { sumMinutes } from '../../lib/counts';
+
+export async function getStaticPaths() {
+  const sections = await getSections();
+  const entries = await getVisibleEntries();
+
+  return sections
+    .filter((section) => section.data.status !== 'soon')
+    .map((section) => ({
+      params: { section: section.id },
+      props: { section, entries: entriesInSection(entries, section.id) },
+    }));
+}
+
+const { section, entries } = Astro.props;
+const count = entries.length;
+const publishedCount = entries.filter((e) => e.data.status === 'published').length;
+const minTotal = sumMinutes(entries.map((e) => e.data.minutes));
+
+const kicker = `Section ${pad2(section.data.order)} — ${section.data.label}`;
+
+const statusDot: Record<string, { cls: string; text: string }> = {
+  published: { cls: 'done', text: 'Complete' },
+  'in-progress': { cls: 'wip', text: 'In Progress' },
+  draft: { cls: 'lock', text: 'Draft' },
+};
+
+const statusbar = {
+  brandHref: '/',
+  segments: [
+    { key: 'SECTION', val: `${pad2(section.data.order)} / ${section.data.name.toUpperCase()}` },
+    { key: 'SECTOR', val: site.coordinate, grow: true },
+    { key: 'STATUS', val: `${publishedCount} OF ${count} PUBLISHED`, accent: true },
+  ],
+};
+---
+
+<Base
+  title={`${section.data.name} — ${site.name}`}
+  screenLabel={`SECTION / ${section.data.name.toUpperCase()}`}
+  statusbar={statusbar}
+>
+  <Fragment slot="foot-meta">
+    <a href="/">&larr; ALL SUBJECTS</a>
+    <span>SECTION {pad2(section.data.order)} / {section.data.name.toUpperCase()}</span>
+  </Fragment>
+
+  <main class="frame">
+    <nav class="crumb">
+      <a href="/">Home</a>
+      <span class="sep">/</span>
+      <span class="here">{section.data.name}</span>
+    </nav>
+
+    <header class="section-head">
+      <span class="label accent kicker">{kicker}</span>
+      <h1 class="section-title">{section.data.name}</h1>
+      <p class="section-intro">{section.data.intro}</p>
+      <div class="section-stats">
+        <div class="stat"><div class="stat-num">{count}</div><div class="stat-lbl">Lessons</div></div>
+        <div class="stat"><div class="stat-num">{count > 0 ? `~${minTotal}` : '0'}</div><div class="stat-lbl">Min Total</div></div>
+        <div class="stat"><div class="stat-num">100%</div><div class="stat-lbl">Reproducible</div></div>
+      </div>
+    </header>
+
+    <div class="divider">
+      <span class="label">Procedure &mdash; run in sequence</span>
+    </div>
+
+    {
+      count === 0 ? (
+        <p class="section-intro">No entries published yet — check back soon.</p>
+      ) : (
+        <section class="lessons">
+          {
+            entries.map((entry) => {
+              const dot = statusDot[entry.data.status];
+              return (
+                <a class="lrow" href={`/${section.id}/${entry.id}/`}>
+                  <span class="lrow-num">{pad2(entry.data.order)}</span>
+                  <div>
+                    <div class="lrow-title">{entry.data.title}</div>
+                    <div class="lrow-desc">{entry.data.description}</div>
+                  </div>
+                  <div class="lrow-meta">
+                    <span class={`dot-status ${dot.cls}`}>{dot.text}</span>
+                    <span>{entry.data.minutes} MIN</span>
+                    <span class="lrow-go">&rarr;</span>
+                  </div>
+                </a>
+              );
+            })
+          }
+        </section>
+      )
+    }
+  </main>
+</Base>
