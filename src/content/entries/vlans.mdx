@@ -13,6 +13,10 @@ tags:
   - segmentation
 ---
 
+import CodeBlock from '../../components/CodeBlock.astro';
+import Callout from '../../components/Callout.astro';
+import Figure from '../../components/Figure.astro';
+
 <h2>What a VLAN actually is</h2>
 <p>A <strong>Virtual LAN</strong> partitions a single Layer&nbsp;2 network into multiple independent broadcast domains. Devices on VLAN&nbsp;20 cannot reach devices on VLAN&nbsp;30 by switching alone &mdash; traffic between them has to be routed, which means it can be filtered. One managed switch becomes many networks.</p>
 <p>The mechanism is the <strong>802.1Q tag</strong>: a 4-byte header inserted into the Ethernet frame carrying a 12-bit <code class="inline">VID</code> (VLAN ID, 1&ndash;4094). Switches read that tag to decide where a frame may go.</p>
@@ -26,74 +30,74 @@ tags:
 <h2>The plan for this lab</h2>
 <p>Four segments, one trunk up to the firewall. Each VLAN gets its own subnet (sized in the next lesson) and its own firewall policy in OPNsense.</p>
 
-<figure class="figure">
-  <div class="fig-box">
-    <span class="fig-tag">DIAGRAM &mdash; trunk + access topology</span>
-  </div>
-  <figcaption>
-    <span class="fc-key">FIG 02.1</span>
-    <span>Mini-PC (router-on-a-stick) &rarr; trunk &rarr; managed switch &rarr; access ports per VLAN.</span>
-  </figcaption>
-</figure>
+<Figure
+  tag="DIAGRAM — trunk + access topology"
+  figId="FIG 02.1"
+  caption="Mini-PC (router-on-a-stick) → trunk → managed switch → access ports per VLAN."
+/>
 
 <h2>Define the VLANs on the switch</h2>
 <p>Most managed switches expose this over their CLI. The example below tags VLANs 10/20/30/99 and assigns port roles &mdash; adapt the interface names to your hardware.</p>
 
-<div class="codeblock">
-  <div class="cb-head">
-    <span class="fname">switch.cfg &mdash; 802.1Q</span>
-    <button class="copy-btn" type="button">Copy</button>
-  </div>
-  <pre><span class="c-com"># create the VLANs</span>
-<span class="c-cmd">vlan</span> 10 <span class="c-flag">name</span> <span class="c-str">MGMT</span>
-<span class="c-cmd">vlan</span> 20 <span class="c-flag">name</span> <span class="c-str">TRUSTED</span>
-<span class="c-cmd">vlan</span> 30 <span class="c-flag">name</span> <span class="c-str">IOT</span>
-<span class="c-cmd">vlan</span> 99 <span class="c-flag">name</span> <span class="c-str">GUEST</span>
-<span class="c-com"># port 1 -&gt; trunk to the firewall, all VLANs tagged</span>
-<span class="c-cmd">interface</span> eth1
-  <span class="c-flag">switchport mode</span> trunk
-  <span class="c-flag">switchport trunk allowed vlan</span> 10,20,30,99
-<span class="c-com"># port 5 -&gt; a trusted laptop, untagged access</span>
-<span class="c-cmd">interface</span> eth5
-  <span class="c-flag">switchport mode</span> access
-  <span class="c-flag">switchport access vlan</span> 20</pre>
-</div>
+<CodeBlock filename="switch.cfg — 802.1Q">
 
-<div class="callout">
-  <div class="co-label">&#9432;&nbsp; Note</div>
-  <p>VLAN&nbsp;1 is the default on virtually every switch and is impossible to delete. Don't put real hosts on it. Park unused ports in a dead VLAN (e.g. 999, no uplink) so a patch-cable mistake lands nowhere instead of on your management network.</p>
-</div>
+```bash
+# create the VLANs
+vlan 10 name MGMT
+vlan 20 name TRUSTED
+vlan 30 name IOT
+vlan 99 name GUEST
+
+# port 1 -> trunk to the firewall, all VLANs tagged
+interface eth1
+  switchport mode trunk
+  switchport trunk allowed vlan 10,20,30,99
+
+# port 5 -> a trusted laptop, untagged access
+interface eth5
+  switchport mode access
+  switchport access vlan 20
+```
+
+</CodeBlock>
+
+<Callout>
+
+VLAN&nbsp;1 is the default on virtually every switch and is impossible to delete. Don't put real hosts on it. Park unused ports in a dead VLAN (e.g. 999, no uplink) so a patch-cable mistake lands nowhere instead of on your management network.
+
+</Callout>
 
 <h2>Create the tagged interfaces on the router</h2>
 <p>On a Linux-based router (or OPNsense's shell) each VLAN becomes a sub-interface of the physical trunk NIC. Here the trunk is <code class="inline">eth0</code> and we give the router the gateway address for the trusted segment.</p>
 
-<div class="codeblock">
-  <div class="cb-head">
-    <span class="fname">router &mdash; iproute2</span>
-    <button class="copy-btn" type="button">Copy</button>
-  </div>
-  <pre><span class="prompt">$ </span><span class="c-cmd">ip link add</span> link eth0 name eth0.20 type vlan id 20
-<span class="prompt">$ </span><span class="c-cmd">ip addr add</span> 10.0.20.1/24 dev eth0.20
-<span class="prompt">$ </span><span class="c-cmd">ip link set</span> eth0.20 up</pre>
-</div>
+<CodeBlock filename="router — iproute2">
+
+```bash
+$ ip link add link eth0 name eth0.20 type vlan id 20
+$ ip addr add 10.0.20.1/24 dev eth0.20
+$ ip link set eth0.20 up
+```
+
+</CodeBlock>
 
 <p>Verify the switch sees the right tags on the trunk before you trust anything &mdash; most failures are a port left in <code class="inline">access</code> mode or a VLAN missing from <code class="inline">allowed</code>.</p>
 
-<div class="codeblock">
-  <div class="cb-head">
-    <span class="fname">verify</span>
-    <button class="copy-btn" type="button">Copy</button>
-  </div>
-  <pre><span class="prompt">$ </span><span class="c-cmd">bridge vlan show</span> dev eth1
-<span class="c-com">port    vlan-id</span>
-eth1    10 20 30 99
-<span class="prompt">$ </span><span class="c-cmd">ping</span> <span class="c-flag">-c2</span> 10.0.20.1   <span class="c-com"># gateway reachable from the trusted VLAN</span></pre>
-</div>
+<CodeBlock filename="verify">
 
-<div class="callout warn">
-  <div class="co-label">&#9888;&nbsp; Warning</div>
-  <p>Put management (VLAN&nbsp;10) on its own segment, but keep a wired access port into it before you cut over. If you tag the port you're currently connected through and get the native VLAN wrong, you will lock yourself out of the switch &mdash; and the only fix is the console cable.</p>
-</div>
+```bash
+$ bridge vlan show dev eth1
+port    vlan-id
+eth1    10 20 30 99
+$ ping -c2 10.0.20.1   # gateway reachable from the trusted VLAN
+```
+
+</CodeBlock>
+
+<Callout type="warn">
+
+Put management (VLAN&nbsp;10) on its own segment, but keep a wired access port into it before you cut over. If you tag the port you're currently connected through and get the native VLAN wrong, you will lock yourself out of the switch &mdash; and the only fix is the console cable.
+
+</Callout>
 
 <h2>Done when</h2>
 <p>You can ping each VLAN gateway from a host on that VLAN, hosts on different VLANs <em>cannot</em> reach each other without a firewall rule, and <code class="inline">bridge vlan show</code> lists every expected VID on the trunk. Routing and per-segment policy come together in <strong>Lesson 04 &mdash; OPNsense Setup</strong>.</p>

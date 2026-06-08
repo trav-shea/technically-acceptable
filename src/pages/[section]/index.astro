@@ -5,6 +5,7 @@
 // no page, matching the un-linked cards on Home). Lesson count and "Min Total"
 // are derived from the section's visible entries.
 import Base from '../../layouts/Base.astro';
+import LessonRow from '../../components/LessonRow.astro';
 import { site } from '../../config/site';
 import { getSections, getVisibleEntries, entriesInSection, pad2 } from '../../lib/content';
 import { sumMinutes } from '../../lib/counts';
@@ -85,18 +86,15 @@ const statusbar = {
             entries.map((entry) => {
               const dot = statusDot[entry.data.status];
               return (
-                <a class="lrow" href={`/${section.id}/${entry.id}/`}>
-                  <span class="lrow-num">{pad2(entry.data.order)}</span>
-                  <div>
-                    <div class="lrow-title">{entry.data.title}</div>
-                    <div class="lrow-desc">{entry.data.description}</div>
-                  </div>
-                  <div class="lrow-meta">
-                    <span class={`dot-status ${dot.cls}`}>{dot.text}</span>
-                    <span>{entry.data.minutes} MIN</span>
-                    <span class="lrow-go">&rarr;</span>
-                  </div>
-                </a>
+                <LessonRow
+                  num={pad2(entry.data.order)}
+                  title={entry.data.title}
+                  description={entry.data.description}
+                  statusCls={dot.cls}
+                  statusText={dot.text}
+                  minutes={entry.data.minutes}
+                  href={`/${section.id}/${entry.id}/`}
+                />
               );
             })
           }

@@ -1,0 +1,29 @@
+---
+// Callout — admonition box. Maps to .callout / .callout.warn.
+//
+// MDX usage (blank lines so the body is parsed as Markdown):
+//   <Callout>
+//
+//   Body text here.
+//
+//   </Callout>
+//
+//   <Callout type="warn">…</Callout>
+interface Props {
+  /** 'note' (accent) or 'warn' (amber warning). */
+  type?: 'note' | 'warn';
+  /** Override the label text (icon is added automatically). */
+  label?: string;
+}
+const { type = 'note', label } = Astro.props;
+
+const isWarn = type === 'warn';
+const icon = isWarn ? '⚠' : 'ⓘ'; // ⚠ / ⓘ
+const text = label ?? (isWarn ? 'Warning' : 'Note');
+const coLabel = `${icon}  ${text}`;
+---
+
+<div class={isWarn ? 'callout warn' : 'callout'}>
+  <div class="co-label">{coLabel}</div>
+  <slot />
+</div>

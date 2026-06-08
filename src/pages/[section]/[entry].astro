@@ -6,6 +6,7 @@
 // current one marked), and prev/next is derived by pager.ts from `order`.
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Pager from '../../components/Pager.astro';
 import { site } from '../../config/site';
 import { getSections, getVisibleEntries, entriesInSection, pad2 } from '../../lib/content';
 import { formatRev } from '../../lib/counts';
@@ -101,28 +102,7 @@ const statusbar = {
 
         <Content />
 
-        <nav class="pager">
-          {
-            prev ? (
-              <a class="prev" href={`/${section.id}/${prev.slug}/`}>
-                <span class="pg-dir">&larr; Prev &middot; {pad2(prev.order)}</span>
-                <span class="pg-title">{prev.title}</span>
-              </a>
-            ) : (
-              <span />
-            )
-          }
-          {
-            next ? (
-              <a class="next" href={`/${section.id}/${next.slug}/`}>
-                <span class="pg-dir">Next &middot; {pad2(next.order)} &rarr;</span>
-                <span class="pg-title">{next.title}</span>
-              </a>
-            ) : (
-              <span />
-            )
-          }
-        </nav>
+        <Pager prev={prev} next={next} sectionId={section.id} />
       </article>
     </div>
   </main>

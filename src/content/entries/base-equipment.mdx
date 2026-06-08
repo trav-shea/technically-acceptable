@@ -1,0 +1,76 @@
+---
+title: Base Equipment
+section: home-lab
+order: 1
+status: published
+standfirst: "Before any VLAN or firewall rule, you need hardware that won't get in the way. Three boxes — a mini-PC router, a managed switch, and an access point — chosen so the lab can grow without a forklift upgrade."
+description: Selecting a mini-PC, managed switch, and AP that won't bottleneck the lab.
+minutes: 10
+date: 2026-05-25
+tags:
+  - hardware
+  - networking
+  - home-lab
+---
+
+import CodeBlock from '../../components/CodeBlock.astro';
+import Callout from '../../components/Callout.astro';
+import Figure from '../../components/Figure.astro';
+
+<h2>What the lab needs</h2>
+<p>The whole lab is three boxes. Each one has exactly one job, and each is chosen so the <em>next</em> lesson is possible without buying more hardware.</p>
+
+<ul>
+  <li><strong>Mini-PC</strong> &mdash; the router/firewall. Needs two NICs (or one NIC plus a VLAN-aware switch) and enough CPU to route at line rate.</li>
+  <li><strong>Managed switch</strong> &mdash; must speak 802.1Q so it can carry tagged VLANs. This is the non-negotiable feature.</li>
+  <li><strong>Access point</strong> &mdash; one that supports multiple SSIDs mapped to VLANs, so wireless clients land in the right segment.</li>
+</ul>
+
+<Figure
+  tag="DIAGRAM — three-box lab"
+  figId="FIG 01.1"
+  caption="Mini-PC router → managed switch → access point. Everything else hangs off the switch."
+/>
+
+<h2>Picking the mini-PC</h2>
+<p>The one spec that matters is the NIC. Confirm what you have before you buy anything else &mdash; an Intel NIC will save you driver pain later.</p>
+
+<CodeBlock filename="check the hardware">
+
+```bash
+$ lspci | grep -i ethernet
+$ lscpu | grep -E 'Model name|^CPU\(s\)'
+```
+
+</CodeBlock>
+
+<Callout>
+
+Two physical NICs is the simplest topology (WAN on one, LAN trunk on the other). A single NIC works too &mdash; you put WAN and LAN on tagged VLANs over one cable &mdash; but that pushes all the complexity into the switch config, so leave it until after the VLANs lesson.
+
+</Callout>
+
+<h2>A quick inventory check</h2>
+<p>Once the boxes are on the bench, a five-line script keeps the count honest. This is Python, so the indentation matters &mdash; and it should render exactly as written.</p>
+
+<CodeBlock filename="inventory.py">
+
+```python
+def summarize(devices):
+    for name, count in sorted(devices.items()):
+        flag = " (redundant)" if count > 1 else ""
+        print(f"{name:>10}: {count}{flag}")
+
+summarize({"mini-pc": 1, "switch": 1, "ap": 2})
+```
+
+</CodeBlock>
+
+<Callout type="warn">
+
+Don't skimp on the switch to afford a fancier mini-PC. An unmanaged switch cannot tag VLANs, and the entire rest of this section depends on tagging. The switch is the load-bearing purchase.
+
+</Callout>
+
+<h2>Done when</h2>
+<p>You have a mini-PC with a known-good NIC, a managed switch that lists 802.1Q in its spec sheet, and an AP that supports VLAN-to-SSID mapping. With the hardware settled, the next lesson carves it into isolated networks &mdash; <strong>Lesson 02 — VLANs</strong>.</p>

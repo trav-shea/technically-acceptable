@@ -1,0 +1,36 @@
+---
+// CodeBlock — the .codeblock chrome (filename + copy button) around a fenced
+// code block.
+//
+// §5 decision: code is authored as a Markdown fenced block (```lang) INSIDE
+// this component. Markdown preserves whitespace exactly (Python-safe), and
+// Astro's Shiki highlights it at build time with the palette theme configured
+// in astro.config.mjs. This component only adds the chrome — it does not touch
+// the code — so indentation is never mangled.
+//
+// Usage in MDX (note the blank lines around the fence):
+//   <CodeBlock filename="app.py">
+//
+//   ```python
+//   def main():
+//       print("hi")
+//   ```
+//
+//   </CodeBlock>
+//
+// The copy button is handled by the kept field-notes.js, which strips a
+// leading "$ " prompt from each line before copying.
+interface Props {
+  /** Filename / label shown at the head of the block. */
+  filename?: string;
+}
+const { filename } = Astro.props;
+---
+
+<div class="codeblock">
+  <div class="cb-head">
+    {filename && <span class="fname">{filename}</span>}
+    <button class="copy-btn" type="button">Copy</button>
+  </div>
+  <slot />
+</div>

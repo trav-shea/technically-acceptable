@@ -1,0 +1,37 @@
+---
+// Pager — prev/next navigation at the foot of an entry. Renders empty <span>
+// placeholders at boundaries so the two-column grid keeps its alignment.
+import type { PagerItem } from '../lib/pager';
+import { pad2 } from '../lib/content';
+
+interface Props {
+  prev: PagerItem | null;
+  next: PagerItem | null;
+  /** Section slug used to build neighbour hrefs. */
+  sectionId: string;
+}
+const { prev, next, sectionId } = Astro.props;
+---
+
+<nav class="pager">
+  {
+    prev ? (
+      <a class="prev" href={`/${sectionId}/${prev.slug}/`}>
+        <span class="pg-dir">&larr; Prev &middot; {pad2(prev.order)}</span>
+        <span class="pg-title">{prev.title}</span>
+      </a>
+    ) : (
+      <span />
+    )
+  }
+  {
+    next ? (
+      <a class="next" href={`/${sectionId}/${next.slug}/`}>
+        <span class="pg-dir">Next &middot; {pad2(next.order)} &rarr;</span>
+        <span class="pg-title">{next.title}</span>
+      </a>
+    ) : (
+      <span />
+    )
+  }
+</nav>

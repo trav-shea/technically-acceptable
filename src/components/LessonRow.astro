@@ -1,0 +1,27 @@
+---
+// LessonRow — one entry row on a section index. Pure presentation.
+interface Props {
+  num: string;
+  title: string;
+  description: string;
+  /** Status dot class: done | wip | lock. */
+  statusCls: string;
+  statusText: string;
+  minutes: number;
+  href: string;
+}
+const { num, title, description, statusCls, statusText, minutes, href } = Astro.props;
+---
+
+<a class="lrow" href={href}>
+  <span class="lrow-num">{num}</span>
+  <div>
+    <div class="lrow-title">{title}</div>
+    <div class="lrow-desc">{description}</div>
+  </div>
+  <div class="lrow-meta">
+    <span class={`dot-status ${statusCls}`}>{statusText}</span>
+    <span>{minutes} MIN</span>
+    <span class="lrow-go">&rarr;</span>
+  </div>
+</a>

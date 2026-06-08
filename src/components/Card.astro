@@ -1,0 +1,30 @@
+---
+// Card — a subject card on the Home grid. Pure presentation; all derived
+// values (lesson count, tag text/class, href) are computed by the page.
+// Renders an <a> when it links somewhere, a <div> for "coming soon" subjects.
+interface Props {
+  indexLabel: string;
+  name: string;
+  summary: string;
+  label: string;
+  isSoon: boolean;
+  href: string | null;
+  tagText: string;
+  tagClass: string;
+}
+const { indexLabel, name, summary, label, isSoon, href, tagText, tagClass } = Astro.props;
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag class={isSoon ? 'card soon' : 'card'} href={href}>
+  <div class="card-index">
+    <span>{indexLabel}</span>
+    {!isSoon && <span class="card-go">&rarr;</span>}
+  </div>
+  <div class="card-name">{name}</div>
+  <p class="card-desc">{summary}</p>
+  <div class="card-foot">
+    <span class={tagClass}>{tagText}</span>
+    <span class="label">{label}</span>
+  </div>
+</Tag>

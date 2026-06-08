@@ -7,6 +7,7 @@
 //   - masthead REV             = newest entry date across the site
 // Adding a section .yaml or an entry .mdx changes these with no edits here.
 import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
 import { site } from '../config/site';
 import { getSections, getVisibleEntries, entriesInSection, pad2, revString } from '../lib/content';
 
@@ -67,25 +68,7 @@ const cards = sections.map((section, i) => {
     </div>
 
     <section class="grid">
-      {
-        cards.map((card) => {
-          const Tag = card.href ? 'a' : 'div';
-          return (
-            <Tag class={card.isSoon ? 'card soon' : 'card'} href={card.href}>
-              <div class="card-index">
-                <span>{card.indexLabel}</span>
-                {!card.isSoon && <span class="card-go">&rarr;</span>}
-              </div>
-              <div class="card-name">{card.name}</div>
-              <p class="card-desc">{card.summary}</p>
-              <div class="card-foot">
-                <span class={card.tagClass}>{card.tagText}</span>
-                <span class="label">{card.label}</span>
-              </div>
-            </Tag>
-          );
-        })
-      }
+      {cards.map((card) => <Card {...card} />)}
     </section>
   </main>
 </Base>
