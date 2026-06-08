@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# secrets — never commit real env files
+.env
+.env.*
+!.env.example
+
+# local-only editor/tool settings (keep launch.json, drop machine-local prefs)
+.claude/settings.local.json
+
+# os / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# local prototype reference (kept out of the shipped repo; remove this line if you want it tracked)
+_prototype/

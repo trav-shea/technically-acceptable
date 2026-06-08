@@ -1,0 +1,20 @@
+---
+// StatusBar — the sticky top status strip on the Home page.
+//
+// Renders five segments from site.ts. The last segment holds the
+// [data-clock] placeholder that public/field-notes.js fills with a live
+// UTC time once per second on the client.
+//
+// Phase 0 renders the Home variant only. Section/Entry pages use different
+// middle segments (SECTION / ENTRY / READ) — that variation is added in
+// Phase 1 when those pages exist, rather than guessed at now.
+import { site } from '../config/site';
+---
+
+<div class="statusbar">
+  <div class="seg"><span class="dot"></span><span class="accent">{site.name}</span></div>
+  <div class="seg hide-sm"><span class="key">DESIG</span><span class="val">{site.designation}</span></div>
+  <div class="seg grow hide-sm"><span class="key">SECTOR</span><span class="val">{site.coordinate}</span></div>
+  <div class="seg hide-sm"><span class="key">STATUS</span><span class="accent">{site.status}</span></div>
+  <div class="seg"><span class="key">UTC</span><span class="val" data-clock>--:--:--Z</span></div>
+</div>
