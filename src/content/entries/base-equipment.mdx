@@ -3,8 +3,8 @@ title: Base Equipment
 section: home-lab
 order: 1
 status: published
-standfirst: "Before any VLAN or firewall rule, you need hardware that won't get in the way. Three boxes — a mini-PC router, a managed switch, and an access point — chosen so the lab can grow without a forklift upgrade."
-description: Selecting a mini-PC, managed switch, and AP that won't bottleneck the lab.
+standfirst: "Before any VLAN or firewall rule, you need hardware that won't get in the way. Four pieces, a mini-PC router, a managed switch, an access point, and a NAS, chosen so the lab can grow without a forklift upgrade."
+description: "The four pieces the lab is built on: a mini-PC router, a managed switch, an access point, and a NAS."
 minutes: 10
 date: 2026-05-25
 tags:
@@ -13,64 +13,75 @@ tags:
   - home-lab
 ---
 
-import CodeBlock from '../../components/CodeBlock.astro';
-import Callout from '../../components/Callout.astro';
-import Figure from '../../components/Figure.astro';
+## Start here: what a home lab actually is
 
-<h2>What the lab needs</h2>
-<p>The whole lab is three boxes. Each one has exactly one job, and each is chosen so the <em>next</em> lesson is possible without buying more hardware.</p>
+A home lab is a small set of computers and network gear that you own and control, sitting in your house, that you use to learn and to run your own services. If the only computer you have ever used is a laptop, think of it this way. Your laptop is one machine that does one person's work. A home lab is an always-on machine, plus the network gear around it, that runs many small services at once and keeps running when you close the lid and walk away.
 
-<ul>
-  <li><strong>Mini-PC</strong> &mdash; the router/firewall. Needs two NICs (or one NIC plus a VLAN-aware switch) and enough CPU to route at line rate.</li>
-  <li><strong>Managed switch</strong> &mdash; must speak 802.1Q so it can carry tagged VLANs. This is the non-negotiable feature.</li>
-  <li><strong>Access point</strong> &mdash; one that supports multiple SSIDs mapped to VLANs, so wireless clients land in the right segment.</li>
-</ul>
+You do not need a server rack or a closet full of blinking lights. You need four pieces. Here is what each one is, in plain terms, why it is on the list, and what to look for when you buy.
 
-<Figure
-  tag="DIAGRAM — three-box lab"
-  figId="FIG 01.1"
-  caption="Mini-PC router → managed switch → access point. Everything else hangs off the switch."
-/>
+## The four pieces
 
-<h2>Picking the mini-PC</h2>
-<p>The one spec that matters is the NIC. Confirm what you have before you buy anything else &mdash; an Intel NIC will save you driver pain later.</p>
+### 1. The mini-PC (your router and your host)
 
-<CodeBlock filename="check the hardware">
+A mini-PC is a small desktop computer, about the size of a paperback book, with no screen. It is the brain of the lab, and it does two jobs at once.
 
-```bash
-$ lspci | grep -i ethernet
-$ lscpu | grep -E 'Model name|^CPU\(s\)'
-```
+First, it acts as your router. A router is the traffic cop for your network. It decides what is allowed to talk to what, and it sits between your devices and the open internet. The box your internet company gave you is also a router, but you do not control it the way you need to here, so you will put your own in front of it.
 
-</CodeBlock>
+Second, it acts as your host. A host is a computer that runs other computers inside itself. That sounds strange the first time you hear it. The software that makes it possible is called a hypervisor, and we install it in the next lesson. For now, all you need to know is that one good mini-PC can behave like a dozen smaller machines, and that is what lets a single box run your firewall, your services, and your experiments side by side.
 
-<Callout>
+What to look for: a recent processor with at least four cores, 16GB of memory at a minimum and 32GB if you can stretch, and two network ports if possible. Two ports make the router job cleaner. A single port works, and the next lessons account for it, but two is nicer. Budget is roughly 300 to 600 dollars depending on memory.
 
-Two physical NICs is the simplest topology (WAN on one, LAN trunk on the other). A single NIC works too &mdash; you put WAN and LAN on tagged VLANs over one cable &mdash; but that pushes all the complexity into the switch config, so leave it until after the VLANs lesson.
+### 2. The managed switch
 
-</Callout>
+A switch is the box that everything plugs into with a network cable. Think of it as a power strip for network connections. Your devices plug in, and it passes their traffic around.
 
-<h2>A quick inventory check</h2>
-<p>Once the boxes are on the bench, a five-line script keeps the count honest. This is Python, so the indentation matters &mdash; and it should render exactly as written.</p>
+The word that matters here is managed. A cheap switch from a big-box store is unmanaged. It passes traffic and that is all it can do. A managed switch lets you carve one physical box into separate, walled-off networks called VLANs, which is the whole point of a segmented lab and the subject of a later lesson. If you buy an unmanaged switch by accident, none of the segmentation lessons will work, so this is the one piece where the label really matters.
 
-<CodeBlock filename="inventory.py">
+What to look for: the words managed or smart managed in the product name, support for something called 802.1Q VLANs, and enough ports for your gear plus room to grow. Eight ports is a comfortable starting size. Budget is roughly 60 to 150 dollars.
 
-```python
-def summarize(devices):
-    for name, count in sorted(devices.items()):
-        flag = " (redundant)" if count > 1 else ""
-        print(f"{name:>10}: {count}{flag}")
+### 3. The access point
 
-summarize({"mini-pc": 1, "switch": 1, "ap": 2})
-```
+An access point is the piece that broadcasts your Wi-Fi. Your phones, tablets, and laptops connect to it through the air instead of a cable.
 
-</CodeBlock>
+You almost certainly already have Wi-Fi from your internet company's box. The reason to add your own access point is that a proper one can broadcast several separate Wi-Fi networks at once and tie each one to a different VLAN. That means your work laptop, the family tablets, and your smart-home gadgets can all be on Wi-Fi while still living in separate, walled-off lanes. The box from your internet company usually cannot do that in a way you control.
 
-<Callout type="warn">
+What to look for: support for multiple SSIDs, which just means multiple Wi-Fi network names, and VLAN tagging. Budget is roughly 80 to 150 dollars. This is the one piece you can add a little later if money is tight, since you can start with one network and split Wi-Fi out once you are comfortable.
 
-Don't skimp on the switch to afford a fancier mini-PC. An unmanaged switch cannot tag VLANs, and the entire rest of this section depends on tagging. The switch is the load-bearing purchase.
+### 4. The NAS
 
-</Callout>
+A NAS is network attached storage. In plain terms, it is a small always-on box with hard drives inside it that everything on your network can reach. It is your own private cloud and your backup target, and for a lot of people, including me, it is the single biggest reason to build a lab in the first place.
 
-<h2>Done when</h2>
-<p>You have a mini-PC with a known-good NIC, a managed switch that lists 802.1Q in its spec sheet, and an AP that supports VLAN-to-SSID mapping. With the hardware settled, the next lesson carves it into isolated networks &mdash; <strong>Lesson 02 — VLANs</strong>.</p>
+Here is why it earns its place. Photos, documents, and backups do not belong only on a laptop that can be lost, stolen, or dropped. A NAS gives you one safe place that lives in your house, that your phone and laptop back up to automatically, and that you are not renting from a company by the month. Put two drives in it and set them up so the data is written to both at once. That setup is called RAID, and the simple version means that if one drive dies, you lose nothing. You swap the dead drive and carry on.
+
+What to look for: a two-bay or four-bay model from a known brand, bought without drives so you can add your own, plus two matching drives rated for always-on use, which are sold as NAS drives. A two-bay box plus a pair of 8TB drives is a sensible, roomy start. Budget is roughly 300 to 500 dollars for the box and the two drives together.
+
+## How they connect
+
+{/* FIGURE: lab topology diagram goes here (screenshots wiring step) */}
+
+The order is simple. The internet comes into your home through your internet company's box. A cable runs from that box into your mini-PC, which is now your router. A cable runs from the mini-PC into the managed switch. Everything else, the access point and the NAS, plugs into the switch. Your wired devices plug into the switch too, and your wireless devices reach the access point through the air. That is the whole shape of it. The diagram at the top of this section shows it laid out.
+
+## Buy once, grow later
+
+You do not have to buy all four pieces on day one. If you want the cheapest honest starting point, get the mini-PC and the managed switch first, because the early lessons depend on them. Add the NAS when you are ready to move your files off the cloud, and add the access point when you want to split your Wi-Fi. None of the four locks you into a brand for the others, which is the point of choosing them this way.
+
+## Verify it
+
+You are done with this step when:
+
+- You own the mini-PC and the managed switch, at a minimum, and they both power on.
+- The switch's product page or box clearly says managed and mentions VLANs or 802.1Q. If it does not, return it.
+- If you bought the NAS, the two drives inside are the matching NAS-rated drives, not whatever was cheapest.
+- You have a short cable for each connection you plan to make, so you are not stuck waiting on a delivery mid-build.
+
+## What broke for me
+
+I bought an unmanaged switch the first time because the listing buried the word. It looked identical to the managed one and cost less, and I could not work out why none of the VLAN guides worked until I read the model number closely. Buy the managed one, confirm the model number, and save yourself the evening.
+
+I also underbought on memory. 16GB felt like plenty until I had a few services running, and then everything got slow at once. If the budget allows it, start at 32GB. Memory is the thing you run out of first.
+
+On the NAS, I almost used two mismatched drives I had lying around. Matching drives rated for always-on use are worth the small extra cost, because the whole promise of the NAS is keeping your data safe, and mismatched or desktop-grade drives quietly undercut that.
+
+## Where it fits
+
+Step one of the Home Lab build path. Everything in the later lessons runs on this hardware.

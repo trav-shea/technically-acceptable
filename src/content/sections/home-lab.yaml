@@ -4,6 +4,7 @@ label: NET / INFRA
 status: active
 summary: Network design, segmentation, and self-hosted services on real hardware.
 intro: >-
-  A single mini-PC, a managed switch, and an access point — turned into a
-  properly segmented, observable network. Work the lessons in order; each one
-  assumes the hardware and addressing decided in the lessons before it.
+  A mini-PC, a managed switch, an access point, and a NAS, turned into a
+  properly segmented, observable network with your own storage at the center
+  of it. Work the lessons in order. Each one assumes the hardware and
+  addressing decided in the lessons before it.

@@ -1,13 +1,13 @@
-// content.ts — thin glue over Astro's content collections.
+// content.ts: thin glue over Astro's content collections.
 //
 // Centralizes two things the page templates would otherwise repeat:
-//   1. draft exclusion — draft:true entries are dropped from PRODUCTION
+//   1. draft exclusion: draft:true entries are dropped from PRODUCTION
 //      builds only (still visible in `astro dev` so you can preview them).
 //   2. ordering + section grouping.
 //
 // This file imports astro:content, so it is not unit-tested (it's glue, per
-// the brief's "skip tests for trivial glue"). The real logic it leans on —
-// pager and counts — lives in pure, tested modules.
+// the brief's "skip tests for trivial glue"). The real logic it leans on,
+// pager and counts, lives in pure, tested modules.
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { latestDate, formatRev } from './counts';
 

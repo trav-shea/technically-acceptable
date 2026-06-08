@@ -1,5 +1,5 @@
 ---
-// Home — the index of all subjects, rendered from the sections collection.
+// Home: the index of all subjects, rendered from the sections collection.
 //
 // Every number here is DERIVED at build time, never typed:
 //   - per-card lesson count    = visible entries in that section
@@ -15,7 +15,7 @@ const sections = await getSections();
 const entries = await getVisibleEntries();
 
 const totalSections = sections.length;
-// "Active" in the divider means live (not coming-soon) — reproduces the
+// "Active" in the divider means live (not coming-soon), reproduces the
 // prototype's "4 of 6" (active + in-progress, excluding the two "soon" cards).
 const activeSections = sections.filter((s) => s.data.status !== 'soon').length;
 const rev = revString(entries);
@@ -29,7 +29,7 @@ const cards = sections.map((section, i) => {
     summary: section.data.summary,
     label: section.data.label,
     isSoon,
-    // Soon cards aren't links — no section page is generated for them.
+    // Soon cards aren't links. No section page is generated for them.
     href: isSoon ? null : `/${section.id}/`,
     tagText:
       section.data.status === 'active'
@@ -47,14 +47,14 @@ const cards = sections.map((section, i) => {
 });
 ---
 
-<Base title={`${site.name} — Index`} screenLabel="HOME">
+<Base title={`${site.name}: Index`} screenLabel="HOME">
   <main class="frame">
     <header class="masthead">
       <div class="designation">
         <span class="wordmark">{site.wordmarkParts[0]}<span class="em">·</span>{site.wordmarkParts[1]}</span>
         <span class="meta">
           <span>{site.designationLine}</span>
-          <span>REV {rev ?? '—'}</span>
+          <span>REV {rev ?? 'TBD'}</span>
         </span>
       </div>
 

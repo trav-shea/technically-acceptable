@@ -1,11 +1,11 @@
 ---
-// Base — the page shell every route wraps.
+// Base: the page shell every route wraps.
 //
-// Does: emits the full <html> document — <head> meta, the global stylesheet,
+// Does: emits the full <html> document: <head> meta, the global stylesheet,
 // the top StatusBar, the four corner registration ticks, the page body via
 // <slot/>, the footer, and the minimal client script (clock + code-copy +
 // mobile-TOC toggle).
-// Does NOT: know page content — pages fill <slot/>.
+// Does NOT: know page content. Pages fill <slot/>.
 //
 // The footer's right-hand meta varies by tier (Home shows an entry total;
 // Section/Entry show breadcrumb-style links), so it's a named slot. Its
@@ -17,7 +17,7 @@ import { getVisibleEntries } from '../lib/content';
 import '../styles/technically-acceptable.css';
 
 interface Props {
-  /** Page <title>. Required — no silent default. */
+  /** Page <title>. Required, no silent default. */
   title: string;
   /** Value for <body data-screen-label> (mirrors the prototype). */
   screenLabel?: string;
@@ -49,7 +49,7 @@ const entriesWord = totalEntries === 1 ? 'ENTRY' : 'ENTRIES';
 
     <footer class="footbar">
       <div class="frame">
-        <span class="handle">&mdash; <span class="em">{site.footerHandle}</span></span>
+        <span class="handle">· <span class="em">{site.footerHandle}</span></span>
         <div class="foot-meta">
           <slot name="foot-meta">
             <span>{totalEntries} {entriesWord}</span>

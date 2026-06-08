@@ -1,5 +1,5 @@
 ---
-// Entry / article page — one writeup.
+// Entry / article page: one writeup.
 //
 // Static paths come from the visible entries (draft:true excluded in prod via
 // getVisibleEntries). The sidebar TOC is the section's sibling entries (the
@@ -29,7 +29,7 @@ export async function getStaticPaths() {
 const { entry, section, siblings } = Astro.props;
 const { Content } = await render(entry);
 
-const kicker = entry.data.kicker ?? `${section.data.name} — Lesson ${pad2(entry.data.order)}`;
+const kicker = entry.data.kicker ?? `${section.data.name}: Lesson ${pad2(entry.data.order)}`;
 const rev = formatRev(entry.data.updated ?? entry.data.date);
 const entryCode = `${pad2(section.data.order)}.${pad2(entry.data.order)}`;
 
@@ -57,7 +57,7 @@ const statusbar = {
 ---
 
 <Base
-  title={`${entry.data.title} — ${section.data.name} — ${site.name}`}
+  title={`${entry.data.title} (${section.data.name}): ${site.name}`}
   screenLabel={`LESSON / ${entry.data.title.toUpperCase()}`}
   statusbar={statusbar}
 >

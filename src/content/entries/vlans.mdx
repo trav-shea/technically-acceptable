@@ -3,7 +3,7 @@ title: VLANs
 section: home-lab
 order: 2
 status: published
-standfirst: "A VLAN lets one physical switch carry several logically separate networks at once. This is the cheapest, highest-leverage segmentation you can do in a home lab — isolate untrusted devices, contain blast radius, and shape traffic without buying more hardware."
+standfirst: "A VLAN lets one physical switch carry several logically separate networks at once. This is the cheapest, highest-leverage segmentation you can do in a home lab: isolate untrusted devices, contain blast radius, and shape traffic without buying more hardware."
 description: Splitting one physical network into isolated, tagged broadcast domains.
 minutes: 14
 date: 2026-06-01
@@ -18,28 +18,28 @@ import Callout from '../../components/Callout.astro';
 import Figure from '../../components/Figure.astro';
 
 <h2>What a VLAN actually is</h2>
-<p>A <strong>Virtual LAN</strong> partitions a single Layer&nbsp;2 network into multiple independent broadcast domains. Devices on VLAN&nbsp;20 cannot reach devices on VLAN&nbsp;30 by switching alone &mdash; traffic between them has to be routed, which means it can be filtered. One managed switch becomes many networks.</p>
-<p>The mechanism is the <strong>802.1Q tag</strong>: a 4-byte header inserted into the Ethernet frame carrying a 12-bit <code class="inline">VID</code> (VLAN ID, 1&ndash;4094). Switches read that tag to decide where a frame may go.</p>
+<p>A <strong>Virtual LAN</strong> partitions a single Layer&nbsp;2 network into multiple independent broadcast domains. Devices on VLAN&nbsp;20 cannot reach devices on VLAN&nbsp;30 by switching alone. Traffic between them has to be routed, which means it can be filtered. One managed switch becomes many networks.</p>
+<p>The mechanism is the <strong>802.1Q tag</strong>: a 4-byte header inserted into the Ethernet frame carrying a 12-bit <code class="inline">VID</code> (VLAN ID, 1 to 4094). Switches read that tag to decide where a frame may go.</p>
 
 <ul>
-  <li><strong>Access port</strong> &mdash; belongs to exactly one VLAN. Frames leave untagged; the end device never sees the tag. This is where laptops, printers, and IoT plugs live.</li>
-  <li><strong>Trunk port</strong> &mdash; carries many VLANs, each frame tagged with its VID. Trunks connect switch&nbsp;&harr;&nbsp;switch and switch&nbsp;&harr;&nbsp;router.</li>
-  <li><strong>Native VLAN</strong> &mdash; the one VLAN on a trunk whose frames travel untagged. Treat it as a footgun (see warning below).</li>
+  <li><strong>Access port</strong>: belongs to exactly one VLAN. Frames leave untagged; the end device never sees the tag. This is where laptops, printers, and IoT plugs live.</li>
+  <li><strong>Trunk port</strong>: carries many VLANs, each frame tagged with its VID. Trunks connect switch&nbsp;&harr;&nbsp;switch and switch&nbsp;&harr;&nbsp;router.</li>
+  <li><strong>Native VLAN</strong>: the one VLAN on a trunk whose frames travel untagged. Treat it as a footgun (see warning below).</li>
 </ul>
 
 <h2>The plan for this lab</h2>
 <p>Four segments, one trunk up to the firewall. Each VLAN gets its own subnet (sized in the next lesson) and its own firewall policy in OPNsense.</p>
 
 <Figure
-  tag="DIAGRAM — trunk + access topology"
+  tag="DIAGRAM: trunk + access topology"
   figId="FIG 02.1"
   caption="Mini-PC (router-on-a-stick) → trunk → managed switch → access ports per VLAN."
 />
 
 <h2>Define the VLANs on the switch</h2>
-<p>Most managed switches expose this over their CLI. The example below tags VLANs 10/20/30/99 and assigns port roles &mdash; adapt the interface names to your hardware.</p>
+<p>Most managed switches expose this over their CLI. The example below tags VLANs 10/20/30/99 and assigns port roles. Adapt the interface names to your hardware.</p>
 
-<CodeBlock filename="switch.cfg — 802.1Q">
+<CodeBlock filename="switch.cfg (802.1Q)">
 
 ```bash
 # create the VLANs
@@ -70,7 +70,7 @@ VLAN&nbsp;1 is the default on virtually every switch and is impossible to delete
 <h2>Create the tagged interfaces on the router</h2>
 <p>On a Linux-based router (or OPNsense's shell) each VLAN becomes a sub-interface of the physical trunk NIC. Here the trunk is <code class="inline">eth0</code> and we give the router the gateway address for the trusted segment.</p>
 
-<CodeBlock filename="router — iproute2">
+<CodeBlock filename="router (iproute2)">
 
 ```bash
 $ ip link add link eth0 name eth0.20 type vlan id 20
@@ -80,7 +80,7 @@ $ ip link set eth0.20 up
 
 </CodeBlock>
 
-<p>Verify the switch sees the right tags on the trunk before you trust anything &mdash; most failures are a port left in <code class="inline">access</code> mode or a VLAN missing from <code class="inline">allowed</code>.</p>
+<p>Verify the switch sees the right tags on the trunk before you trust anything. Most failures are a port left in <code class="inline">access</code> mode or a VLAN missing from <code class="inline">allowed</code>.</p>
 
 <CodeBlock filename="verify">
 
@@ -95,9 +95,9 @@ $ ping -c2 10.0.20.1   # gateway reachable from the trusted VLAN
 
 <Callout type="warn">
 
-Put management (VLAN&nbsp;10) on its own segment, but keep a wired access port into it before you cut over. If you tag the port you're currently connected through and get the native VLAN wrong, you will lock yourself out of the switch &mdash; and the only fix is the console cable.
+Put management (VLAN&nbsp;10) on its own segment, but keep a wired access port into it before you cut over. If you tag the port you're currently connected through and get the native VLAN wrong, you will lock yourself out of the switch, and the only fix is the console cable.
 
 </Callout>
 
 <h2>Done when</h2>
-<p>You can ping each VLAN gateway from a host on that VLAN, hosts on different VLANs <em>cannot</em> reach each other without a firewall rule, and <code class="inline">bridge vlan show</code> lists every expected VID on the trunk. Routing and per-segment policy come together in <strong>Lesson 04 &mdash; OPNsense Setup</strong>.</p>
+<p>You can ping each VLAN gateway from a host on that VLAN, hosts on different VLANs <em>cannot</em> reach each other without a firewall rule, and <code class="inline">bridge vlan show</code> lists every expected VID on the trunk. Routing and per-segment policy come together in <strong>Lesson 04: OPNsense Setup</strong>.</p>

@@ -1,12 +1,12 @@
 // ============================================================
-// CONTENT COLLECTIONS — the typed shape of all site content.
+// CONTENT COLLECTIONS: the typed shape of all site content.
 //
 // Two collections, both loaded from the filesystem with the `glob` loader:
-//   sections — one YAML data file per subject (no body)
-//   entries  — one MDX file per writeup (frontmatter + article body)
+//   sections: one YAML data file per subject (no body)
+//   entries:  one MDX file per writeup (frontmatter + article body)
 //
 // Zod validates every file's frontmatter at build time. A missing or
-// wrong-typed field FAILS `astro build` loudly — that is the guardrail, not
+// wrong-typed field FAILS `astro build` loudly. That is the guardrail, not
 // a nicety. (tests/ feeds a deliberately-broken object to prove it rejects.)
 //
 // Note on slugs: the glob loader derives a stable `id` from each filename
@@ -32,7 +32,7 @@ const sections = defineCollection({
     summary: z.string(),
     /**
      * Section-landing intro paragraph (longer than `summary`).
-     * Schema extension beyond the brief — the prototype's section page shows
+     * Schema extension beyond the brief. The prototype's section page shows
      * a richer intro than the home card. Flagged for sign-off.
      */
     intro: z.string(),
@@ -46,7 +46,7 @@ const entries = defineCollection({
     title: z.string(),
     /** Which subject this entry belongs to (references a sections id). */
     section: reference('sections'),
-    /** Order within its section (1-based) — also drives prev/next. */
+    /** Order within its section (1-based). Also drives prev/next. */
     order: z.number().int().positive(),
     /** Display status badge. Distinct from `draft` (see below). */
     status: z.enum(['published', 'in-progress', 'draft']),
@@ -56,12 +56,12 @@ const entries = defineCollection({
     standfirst: z.string(),
     /**
      * Short teaser shown as the lesson-row description on the section index.
-     * Schema extension beyond the brief — distinct from `standfirst`, which
+     * Schema extension beyond the brief. Distinct from `standfirst`, which
      * is the longer article opener. Flagged for sign-off.
      */
     description: z.string(),
     /**
-     * Estimated read time in minutes. Schema extension beyond the brief —
+     * Estimated read time in minutes. Schema extension beyond the brief,
      * the prototype displays per-lesson read times and a section "Min Total".
      * Flagged for sign-off.
      */

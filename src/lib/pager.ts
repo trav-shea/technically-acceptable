@@ -1,4 +1,4 @@
-// pager.ts — prev/next navigation within a section.
+// pager.ts: prev/next navigation within a section.
 //
 // Pure and Astro-free: operates on plain objects so it can be unit-tested
 // without a build. The page template maps content-collection entries into

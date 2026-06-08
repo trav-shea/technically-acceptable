@@ -1,11 +1,11 @@
 ---
-// Figure — a figure with caption. Maps to .figure.
+// Figure: a figure with caption. Maps to .figure.
 //
 // Phase 2 renders the prototype's placeholder box (.fig-box) with the figure
 // tag + caption. Real images + Astro image optimization come in Phase 3 (a
 // `src` prop will render an <img> instead of the placeholder box).
 interface Props {
-  /** Label shown inside the placeholder box, e.g. "DIAGRAM — topology". */
+  /** Label shown inside the placeholder box, e.g. "DIAGRAM: topology". */
   tag: string;
   /** Figure id for the caption key, e.g. "FIG 02.1". */
   figId?: string;

@@ -1,9 +1,9 @@
 // ============================================================
-// SITE IDENTITY — the single source of truth for site chrome.
+// SITE IDENTITY: the single source of truth for site chrome.
 //
 // Every piece of text that appears in the masthead, status strip, page
 // titles, and footer reads from this object. Rename the site, move the
-// coordinate, or swap the footer handle in ONE place here — never by
+// coordinate, or swap the footer handle in ONE place here, never by
 // hand-editing markup across pages.
 //
 // What this does NOT do (yet): derive entry counts, "active" tallies, or
@@ -23,7 +23,7 @@ export interface SiteIdentity {
   /**
    * Short mark for tight spots (e.g. the status-strip badge on narrow
    * screens) where the full two-word wordmark would overflow. Used only
-   * where it's needed — not a global rename.
+   * where it's needed, not a global rename.
    */
   shortMark: string;
   /** Designation code shown in the status strip and masthead meta. */
@@ -34,7 +34,7 @@ export interface SiteIdentity {
   coordinate: string;
   /** Status-strip STATUS value on the home/index pages. */
   status: string;
-  /** Footer handle — rendered as "— {footerHandle}". Parent brand. */
+  /** Footer handle. The footer signature line. Parent brand. */
   footerHandle: string;
   /** Home masthead headline. `em` words get the accent color. */
   lede: string;

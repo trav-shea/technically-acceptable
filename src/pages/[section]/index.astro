@@ -1,5 +1,5 @@
 ---
-// Section landing — one subject's ordered list of entries.
+// Section landing: one subject's ordered list of entries.
 //
 // Static paths are generated for every section EXCEPT "soon" ones (which have
 // no page, matching the un-linked cards on Home). Lesson count and "Min Total"
@@ -27,7 +27,7 @@ const count = entries.length;
 const publishedCount = entries.filter((e) => e.data.status === 'published').length;
 const minTotal = sumMinutes(entries.map((e) => e.data.minutes));
 
-const kicker = `Section ${pad2(section.data.order)} — ${section.data.label}`;
+const kicker = `Section ${pad2(section.data.order)}: ${section.data.label}`;
 
 const statusDot: Record<string, { cls: string; text: string }> = {
   published: { cls: 'done', text: 'Complete' },
@@ -46,7 +46,7 @@ const statusbar = {
 ---
 
 <Base
-  title={`${section.data.name} — ${site.name}`}
+  title={`${section.data.name}: ${site.name}`}
   screenLabel={`SECTION / ${section.data.name.toUpperCase()}`}
   statusbar={statusbar}
 >
@@ -74,12 +74,12 @@ const statusbar = {
     </header>
 
     <div class="divider">
-      <span class="label">Procedure &mdash; run in sequence</span>
+      <span class="label">Procedure: run in sequence</span>
     </div>
 
     {
       count === 0 ? (
-        <p class="section-intro">No entries published yet — check back soon.</p>
+        <p class="section-intro">No entries published yet. Check back soon.</p>
       ) : (
         <section class="lessons">
           {

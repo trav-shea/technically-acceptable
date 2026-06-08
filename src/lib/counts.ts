@@ -1,4 +1,4 @@
-// counts.ts — derived tallies and the REV date.
+// counts.ts: derived tallies and the REV date.
 //
 // Pure and Astro-free. The brief's hard rule: counts and dates are derived
 // from content at build time, never typed by hand. These helpers are where
@@ -15,7 +15,7 @@ export function sumMinutes(minutes: number[]): number {
 }
 
 /**
- * The most recent date across all published entries — the site "REV" date.
+ * The most recent date across all published entries: the site "REV" date.
  * Each entry contributes its `updated` if present, else its `date`.
  *
  * Fails loudly: throws on an empty list rather than inventing a date. The

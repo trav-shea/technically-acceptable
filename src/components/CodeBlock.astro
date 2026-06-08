@@ -1,12 +1,12 @@
 ---
-// CodeBlock — the .codeblock chrome (filename + copy button) around a fenced
+// CodeBlock: the .codeblock chrome (filename + copy button) around a fenced
 // code block.
 //
 // §5 decision: code is authored as a Markdown fenced block (```lang) INSIDE
 // this component. Markdown preserves whitespace exactly (Python-safe), and
 // Astro's Shiki highlights it at build time with the palette theme configured
-// in astro.config.mjs. This component only adds the chrome — it does not touch
-// the code — so indentation is never mangled.
+// in astro.config.mjs. This component only adds the chrome. It does not touch
+// the code, so indentation is never mangled.
 //
 // Usage in MDX (note the blank lines around the fence):
 //   <CodeBlock filename="app.py">
