@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 
+import cloudflare from '@astrojs/cloudflare';
+
 // Pure static site (no SSR adapter). Output is plain HTML in dist/.
 // `site` is intentionally left unset until Phase 3, when the sitemap and RSS
 // integrations need a real canonical URL. Setting a fake placeholder now would
@@ -10,4 +12,6 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   // site: 'https://<decided-in-phase-3>',
   integrations: [mdx()],
+
+  adapter: cloudflare(),
 });
