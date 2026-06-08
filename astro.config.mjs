@@ -8,7 +8,7 @@ import mdx from '@astrojs/mdx';
 // be a silent lie that leaks into generated <link> tags — so it stays absent
 // and loud-by-omission until the domain is decided.
 
-// Shiki theme mapped to the approved oxide-amber palette (field-notes.css
+// Shiki theme mapped to the approved oxide-amber palette (technically-acceptable.css
 // tokens). Code is highlighted at build time via fenced ```lang blocks, which
 // preserve whitespace exactly (Python-safe). Token *assignment* is grammar-
 // based, so the distribution differs slightly from the prototype's hand-

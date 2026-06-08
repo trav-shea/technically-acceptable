@@ -14,7 +14,7 @@
 import { site } from '../config/site';
 import StatusBar, { type StatusSegment } from '../components/StatusBar.astro';
 import { getVisibleEntries } from '../lib/content';
-import '../styles/field-notes.css';
+import '../styles/technically-acceptable.css';
 
 interface Props {
   /** Page <title>. Required — no silent default. */
@@ -62,6 +62,6 @@ const entriesWord = totalEntries === 1 ? 'ENTRY' : 'ENTRIES';
 
     {/* Minimal interaction layer, ported verbatim. is:inline keeps it a static
         asset (no Astro bundling) so it matches the prototype byte-for-byte. */}
-    <script is:inline src="/field-notes.js"></script>
+    <script is:inline src="/technically-acceptable.js"></script>
   </body>
 </html>

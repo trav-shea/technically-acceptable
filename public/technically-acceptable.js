@@ -1,4 +1,4 @@
-/* FIELD NOTES — minimal interaction layer */
+/* TECHNICALLY ACCEPTABLE — minimal interaction layer */
 (function () {
   // live UTC clock in the status strip
   function tick() {
