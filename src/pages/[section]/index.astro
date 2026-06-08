@@ -25,6 +25,15 @@ export async function getStaticPaths() {
 const { section, entries } = Astro.props;
 const count = entries.length;
 const publishedCount = entries.filter((e) => e.data.status === 'published').length;
+// Truthful section status: empty, all in progress, all published, or mixed.
+const statusVal =
+  count === 0
+    ? 'NO ENTRIES'
+    : publishedCount === count
+      ? `${count} OF ${count} PUBLISHED`
+      : publishedCount === 0
+        ? `${count} IN PROGRESS`
+        : `${publishedCount} OF ${count} PUBLISHED`;
 const minTotal = sumMinutes(entries.map((e) => e.data.minutes));
 
 const kicker = `Section ${pad2(section.data.order)}: ${section.data.label}`;
@@ -40,7 +49,7 @@ const statusbar = {
   segments: [
     { key: 'SECTION', val: `${pad2(section.data.order)} / ${section.data.name.toUpperCase()}` },
     { key: 'SECTOR', val: site.coordinate, grow: true },
-    { key: 'STATUS', val: `${publishedCount} OF ${count} PUBLISHED`, accent: true },
+    { key: 'STATUS', val: statusVal, accent: true },
   ],
 };
 ---
