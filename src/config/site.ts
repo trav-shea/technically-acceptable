@@ -60,7 +60,7 @@ export const site: SiteIdentity = {
   coordinate: '39.4668°N 76.2916°W', // Abingdon, MD
   status: 'OPERATIONAL',
   lede: 'Practical cybersecurity and AI. Built, broken, documented.',
-  subhead: "A practitioner going deep on both, with a defense operator's eye for what holds up.",
+  subhead: 'Real builds, honest results, and the fixes in between.',
   links: {
     github: '', // TODO: set when the public repo URL exists (Phase 4)
     substack: '', // TODO: set if/when a top-level Substack link is wanted
