@@ -67,6 +67,13 @@ const groups = [
       <p class="subhead">{site.subhead}</p>
     </header>
 
+    <section class="home-brief">
+      <Subscribe
+        heading="The Brief"
+        valueProp="A weekly, plain-English read on CMMC and defense compliance. Launching soon."
+      />
+    </section>
+
     {
       groups.map((group) => (
         <Fragment>
@@ -82,13 +89,6 @@ const groups = [
         </Fragment>
       ))
     }
-
-    <section class="home-brief">
-      <Subscribe
-        heading="The Brief"
-        valueProp="A weekly, plain-English read on CMMC and defense compliance. Launching soon."
-      />
-    </section>
   </main>
 </Base>
 
