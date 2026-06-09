@@ -2,5 +2,6 @@ name: CMMC Field Guide
 order: 2
 label: COMPLIANCE
 status: in-progress
+group: field-guides
 summary: "A long-term build: a plain-English guide to auditing your network against CMMC."
 intro: "A long-term build: a plain-English guide to auditing your network against CMMC."

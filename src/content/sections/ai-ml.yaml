@@ -2,5 +2,6 @@ name: AI Projects
 order: 4
 label: MODELS
 status: in-progress
-summary: "Learning to use AI, design AI workflows, and run AI agents."
-intro: "Learning to use AI, design AI workflows, and run AI agents."
+group: build
+summary: "Designing AI workflows and running agents, with a defense operator's eye on what ships."
+intro: "Designing AI workflows and running agents, with a defense operator's eye on what ships."

@@ -56,9 +56,8 @@ export const site: SiteIdentity = {
   coordinate: '39.4668°N 76.2916°W', // Abingdon, MD
   status: 'OPERATIONAL',
   footerHandle: 'Imposter Syndrome',
-  lede: 'Tech projects and guides, built in the open and made to replicate.',
-  subhead:
-    'Not a traditional blog. Each project below is set up for you to replicate what I built and shows the process I used to learn it. Pick a subject to start.',
+  lede: 'Practical cybersecurity and AI. Built, broken, documented.',
+  subhead: "A practitioner going deep on both, with a defense operator's eye for what holds up.",
   links: {
     github: '', // TODO: set when the public repo URL exists (Phase 4)
     substack: '', // TODO: set if/when a top-level Substack link is wanted

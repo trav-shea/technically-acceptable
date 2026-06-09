@@ -2,7 +2,8 @@ name: Home Lab
 order: 1
 label: NET / INFRA
 status: active
-summary: Network design, segmentation, and self-hosted services on real hardware.
+group: build
+summary: "How I run my own stack: a segmented network, self-hosted services, and real hardware."
 intro: >-
   A mini-PC, a managed switch, an access point, and a NAS, turned into a
   properly segmented, observable network with your own storage at the center

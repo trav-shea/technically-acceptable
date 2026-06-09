@@ -2,5 +2,6 @@ name: Cyber Security
 order: 3
 label: SECURITY
 status: in-progress
-summary: "Practical security work: labs, write-ups, and defenses you can replicate."
-intro: "Practical security work: labs, write-ups, and defenses you can replicate."
+group: field-guides
+summary: "Practical security work: labs, write-ups, and defenses that hold up."
+intro: "Practical security work: labs, write-ups, and defenses that hold up."

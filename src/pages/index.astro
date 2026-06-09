@@ -1,35 +1,29 @@
 ---
-// Home: the index of all subjects, rendered from the sections collection.
+// Home: the subjects index, split into two job-based groups (Field Guides,
+// then Build). Sections carry a `group` field in their yaml.
 //
-// Every number here is DERIVED at build time, never typed:
-//   - per-card lesson count    = visible entries in that section
-//   - divider "NN / MM ACTIVE" = total sections / non-"soon" sections
-//   - masthead REV             = newest entry date across the site
-// Adding a section .yaml or an entry .mdx changes these with no edits here.
+// Derived at build time, never typed:
+//   - per-card count = visible entries in that section
+//   - masthead REV   = newest entry date across the site
+// Adding a section .yaml or an entry .mdx updates the grid with no edits here.
 import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 import { site } from '../config/site';
-import { getSections, getVisibleEntries, entriesInSection, pad2, revString } from '../lib/content';
+import { getSections, getVisibleEntries, entriesInSection, pad2, revString, type Section } from '../lib/content';
 
 const sections = await getSections();
 const entries = await getVisibleEntries();
-
-const totalSections = sections.length;
-// "Active" in the divider means live (not coming-soon), reproduces the
-// prototype's "4 of 6" (active + in-progress, excluding the two "soon" cards).
-const activeSections = sections.filter((s) => s.data.status !== 'soon').length;
 const rev = revString(entries);
 
-const cards = sections.map((section, i) => {
+function toCard(section: Section, indexLabel: string) {
   const count = entriesInSection(entries, section.id).length;
   const isSoon = section.data.status === 'soon';
   return {
-    indexLabel: pad2(i + 1),
+    indexLabel,
     name: section.data.name,
     summary: section.data.summary,
     label: section.data.label,
     isSoon,
-    // Soon cards aren't links. No section page is generated for them.
     href: isSoon ? null : `/${section.id}/`,
     tagText:
       section.data.status === 'active'
@@ -44,7 +38,17 @@ const cards = sections.map((section, i) => {
           ? 'tag progress'
           : 'tag',
   };
-});
+}
+
+// Field Guides renders first, then Build. Within each group, sections keep
+// their `order`. Card index labels restart at 01 per group.
+const groups = [
+  { id: 'field-guides', title: 'Field Guides' },
+  { id: 'build', title: 'Build' },
+].map((g) => ({
+  ...g,
+  cards: sections.filter((s) => s.data.group === g.id).map((s, i) => toCard(s, pad2(i + 1))),
+}));
 ---
 
 <Base title={`${site.name}: Index`} screenLabel="HOME">
@@ -58,17 +62,25 @@ const cards = sections.map((section, i) => {
         </span>
       </div>
 
-      <h1 class="lede">Tech projects and guides, built in the open and <span class="em">made to replicate</span>.</h1>
+      <h1 class="lede">Practical cybersecurity and AI. <span class="em">Built, broken, documented.</span></h1>
       <p class="subhead">{site.subhead}</p>
+      <p><a class="tag active" href="/home-lab/">See how I run my stack &rarr;</a></p>
     </header>
 
-    <div class="divider">
-      <span class="label">Subjects</span>
-      <span class="count mono">{pad2(totalSections)} / {pad2(activeSections)} ACTIVE</span>
-    </div>
-
-    <section class="grid">
-      {cards.map((card) => <Card {...card} />)}
-    </section>
+    {
+      groups.map((group) => (
+        <Fragment>
+          <div class="divider" id={group.id}>
+            <span class="label">{group.title}</span>
+            <span class="count mono">{pad2(group.cards.length)}</span>
+          </div>
+          <section class="grid">
+            {group.cards.map((card) => (
+              <Card {...card} />
+            ))}
+          </section>
+        </Fragment>
+      ))
+    }
   </main>
 </Base>

@@ -1,6 +1,7 @@
-name: Learning Python
+name: "AI & Automation"
 order: 5
-label: SOFTWARE
+label: AUTOMATION
 status: in-progress
-summary: "Learning Python by building tools I actually use."
-intro: "Learning Python by building tools I actually use."
+group: build
+summary: "Applied automation and internal tooling, and the scripting that powers it."
+intro: "Applied automation and internal tooling, and the scripting that powers it."

@@ -28,6 +28,12 @@ const sections = defineCollection({
     label: z.string(),
     /** Drives card styling and the home "active" tally. */
     status: z.enum(['active', 'in-progress', 'soon']),
+    /**
+     * Which homepage group the section belongs to. "field-guides" renders
+     * first (authority-forward reference work), "build" second (things I run
+     * and make). Defaults to "build".
+     */
+    group: z.enum(['field-guides', 'build']).default('build'),
     /** Card description on Home (short). */
     summary: z.string(),
     /**
