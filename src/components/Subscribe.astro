@@ -12,7 +12,9 @@
 //
 // Email is the only data sent. No trackers, no third-party scripts beyond
 // the POST. Styling uses existing CSS tokens in a scoped block; the global
-// stylesheet is not touched.
+// stylesheet is not touched. The "Powered by Buttondown" referral link is
+// kept (muted) per the free-tier backlink expectation; it can go on a paid
+// plan.
 import { site } from '../config/site';
 
 interface Props {
@@ -23,17 +25,27 @@ interface Props {
 }
 const { heading, valueProp } = Astro.props;
 
-const action = `https://buttondown.com/api/emails/embed-subscribe/${site.newsletter.buttondownUsername}`;
+const username = site.newsletter.buttondownUsername;
+const action = `https://buttondown.com/api/emails/embed-subscribe/${username}`;
+const referral = `https://buttondown.com/refer/${username}`;
+// Unique per render so footer + homepage instances never collide on the id.
+const fieldId = `bd-email-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
 <form class="subscribe" action={action} method="POST">
   <p class="sub-head">{heading}</p>
   <p class="sub-vp">{valueProp}</p>
-  <div class="sub-row">
-    <input type="email" name="email" required placeholder="you@example.com" aria-label="Email address" />
-    <button type="submit">Subscribe</button>
+  <div class="sub-field">
+    <label class="sub-label" for={fieldId}>Email address</label>
+    <div class="sub-row">
+      <input type="email" name="email" id={fieldId} required placeholder="you@example.com" />
+      <button type="submit">Subscribe</button>
+    </div>
   </div>
   <p class="sub-msg" hidden aria-live="polite"></p>
+  <p class="sub-powered">
+    <a href={referral} target="_blank" rel="noopener">Powered by Buttondown.</a>
+  </p>
 </form>
 
 <style>
@@ -59,6 +71,15 @@ const action = `https://buttondown.com/api/emails/embed-subscribe/${site.newslet
     color: var(--ink-dim);
     margin: 0 0 16px;
     max-width: 48ch;
+  }
+  .subscribe .sub-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 7px;
   }
   .subscribe .sub-row {
     display: flex;
@@ -113,6 +134,20 @@ const action = `https://buttondown.com/api/emails/embed-subscribe/${site.newslet
   }
   .subscribe .sub-msg.err {
     color: var(--warn);
+  }
+  .subscribe .sub-powered {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 16px 0 0;
+  }
+  .subscribe .sub-powered a {
+    color: var(--ink-ghost);
+    transition: color 0.15s ease;
+  }
+  .subscribe .sub-powered a:hover {
+    color: var(--accent);
   }
 </style>
 
