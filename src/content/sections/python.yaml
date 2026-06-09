@@ -1,7 +1,0 @@
-name: "AI & Automation"
-order: 5
-label: AUTOMATION
-status: in-progress
-group: build
-summary: "Applied automation and internal tooling, and the scripting that powers it."
-intro: "Applied automation and internal tooling, and the scripting that powers it."

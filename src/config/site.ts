@@ -1,10 +1,9 @@
 // ============================================================
 // SITE IDENTITY: the single source of truth for site chrome.
 //
-// Every piece of text that appears in the masthead, status strip, page
-// titles, and footer reads from this object. Rename the site, move the
-// coordinate, or swap the footer handle in ONE place here, never by
-// hand-editing markup across pages.
+// Every piece of text that appears in the masthead, status strip, and page
+// titles reads from this object. Rename the site or move the coordinate in
+// ONE place here, never by hand-editing markup across pages.
 //
 // What this does NOT do (yet): derive entry counts, "active" tallies, or
 // the REV date. Those come from content collections at build time in
@@ -34,8 +33,6 @@ export interface SiteIdentity {
   coordinate: string;
   /** Status-strip STATUS value on the home/index pages. */
   status: string;
-  /** Footer handle. The footer signature line. Parent brand. */
-  footerHandle: string;
   /** Home masthead headline. `em` words get the accent color. */
   lede: string;
   /** Home masthead sub-headline. */
@@ -55,7 +52,6 @@ export const site: SiteIdentity = {
   designationLine: 'TA 1-0 / FIELD REFERENCE',
   coordinate: '39.4668°N 76.2916°W', // Abingdon, MD
   status: 'OPERATIONAL',
-  footerHandle: 'Imposter Syndrome',
   lede: 'Practical cybersecurity and AI. Built, broken, documented.',
   subhead: "A practitioner going deep on both, with a defense operator's eye for what holds up.",
   links: {

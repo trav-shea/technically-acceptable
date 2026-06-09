@@ -1,7 +1,7 @@
-name: AI Projects
+name: "AI & Automation"
 order: 4
-label: MODELS
+label: AI / AUTOMATION
 status: in-progress
 group: build
-summary: "Designing AI workflows and running agents, with a defense operator's eye on what ships."
-intro: "Designing AI workflows and running agents, with a defense operator's eye on what ships."
+summary: "Building AI workflows and agents, plus the automation and tooling that powers real work."
+intro: "Building AI workflows and agents, plus the automation and tooling that powers real work."

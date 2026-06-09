@@ -11,7 +11,6 @@
 // Section/Entry show breadcrumb-style links), so it's a named slot. Its
 // DEFAULT is the derived Home meta: the entry total is counted from content,
 // never typed.
-import { site } from '../config/site';
 import StatusBar, { type StatusSegment } from '../components/StatusBar.astro';
 import { getVisibleEntries } from '../lib/content';
 import '../styles/technically-acceptable.css';
@@ -49,7 +48,6 @@ const entriesWord = totalEntries === 1 ? 'ENTRY' : 'ENTRIES';
 
     <footer class="footbar">
       <div class="frame">
-        <span class="handle">· <span class="em">{site.footerHandle}</span></span>
         <div class="foot-meta">
           <slot name="foot-meta">
             <span>{totalEntries} {entriesWord}</span>
