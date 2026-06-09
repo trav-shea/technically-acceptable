@@ -1,0 +1,147 @@
+---
+// Subscribe: email capture for "The Brief" via Buttondown's PUBLIC embed
+// endpoint (public username only, no secret API key).
+//
+// Works with ZERO JavaScript: it is a real <form> that POSTs straight to
+// Buttondown. The hoisted script below is progressive enhancement only: it
+// intercepts the submit, POSTs the email with fetch (urlencoded body, no
+// query string), and swaps in an inline confirmation without leaving the
+// page. The cross-origin response is opaque, but the POST still registers
+// the subscriber, so a resolved fetch is treated as success (double opt-in
+// means the real confirmation happens by email).
+//
+// Email is the only data sent. No trackers, no third-party scripts beyond
+// the POST. Styling uses existing CSS tokens in a scoped block; the global
+// stylesheet is not touched.
+import { site } from '../config/site';
+
+interface Props {
+  /** Short heading, e.g. "The Brief". */
+  heading: string;
+  /** One-line value proposition. */
+  valueProp: string;
+}
+const { heading, valueProp } = Astro.props;
+
+const action = `https://buttondown.com/api/emails/embed-subscribe/${site.newsletter.buttondownUsername}`;
+---
+
+<form class="subscribe" action={action} method="POST">
+  <p class="sub-head">{heading}</p>
+  <p class="sub-vp">{valueProp}</p>
+  <div class="sub-row">
+    <input type="email" name="email" required placeholder="you@example.com" aria-label="Email address" />
+    <button type="submit">Subscribe</button>
+  </div>
+  <p class="sub-msg" hidden aria-live="polite"></p>
+</form>
+
+<style>
+  .subscribe {
+    border: 1px solid var(--line-strong);
+    background: var(--bg-inset);
+    border-radius: 2px;
+    padding: 20px 22px;
+    max-width: 56ch;
+  }
+  .subscribe .sub-head {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin: 0 0 8px;
+  }
+  .subscribe .sub-vp {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    margin: 0 0 16px;
+    max-width: 48ch;
+  }
+  .subscribe .sub-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .subscribe input[type='email'] {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 9px 12px;
+  }
+  .subscribe input[type='email']::placeholder {
+    color: var(--ink-faint);
+  }
+  .subscribe input[type='email']:focus {
+    outline: none;
+    border-color: var(--accent-line);
+  }
+  .subscribe button {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-ghost);
+    border: 1px solid var(--accent-line);
+    border-radius: 2px;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .subscribe button:hover {
+    color: var(--accent-bright);
+    border-color: var(--accent);
+  }
+  .subscribe .sub-msg {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    margin: 12px 0 0;
+  }
+  .subscribe .sub-msg.ok {
+    color: var(--accent);
+  }
+  .subscribe .sub-msg.err {
+    color: var(--warn);
+  }
+</style>
+
+<script>
+  // Progressive enhancement: handle every subscribe form on the page.
+  for (const form of document.querySelectorAll('form.subscribe')) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const el = form as HTMLFormElement;
+      const email = (el.querySelector('input[name="email"]') as HTMLInputElement)?.value ?? '';
+      const row = el.querySelector('.sub-row') as HTMLElement | null;
+      const msg = el.querySelector('.sub-msg') as HTMLElement | null;
+      if (!msg) return;
+
+      const body = new URLSearchParams();
+      body.set('email', email);
+
+      try {
+        // Opaque (no-cors) response, but the POST still registers the email.
+        await fetch(el.action, { method: 'POST', mode: 'no-cors', body });
+        if (row) row.hidden = true;
+        msg.hidden = false;
+        msg.textContent = 'Check your inbox to confirm.';
+        msg.classList.add('ok');
+      } catch {
+        msg.hidden = false;
+        msg.textContent = 'Something went wrong. Please try again.';
+        msg.classList.add('err');
+      }
+    });
+  }
+</script>

@@ -12,6 +12,7 @@
 // DEFAULT is the derived Home meta: the entry total is counted from content,
 // never typed.
 import StatusBar, { type StatusSegment } from '../components/StatusBar.astro';
+import Subscribe from '../components/Subscribe.astro';
 import { getVisibleEntries } from '../lib/content';
 import '../styles/technically-acceptable.css';
 
@@ -46,6 +47,13 @@ const entriesWord = totalEntries === 1 ? 'ENTRY' : 'ENTRIES';
 
     <slot />
 
+    <section class="frame footer-brief">
+      <Subscribe
+        heading="The Brief"
+        valueProp="A weekly, plain-English read on CMMC and defense compliance. Launching soon."
+      />
+    </section>
+
     <footer class="footbar">
       <div class="frame">
         <div class="foot-meta">
@@ -63,3 +71,11 @@ const entriesWord = totalEntries === 1 ? 'ENTRY' : 'ENTRIES';
     <script is:inline src="/technically-acceptable.js"></script>
   </body>
 </html>
+
+<style>
+  /* Spacing only, so the site-wide subscribe band sits in its own row above
+     the footer strip. No design tokens added. */
+  .footer-brief {
+    margin-top: clamp(48px, 8vw, 88px);
+  }
+</style>

@@ -8,6 +8,7 @@
 // Adding a section .yaml or an entry .mdx updates the grid with no edits here.
 import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
+import Subscribe from '../components/Subscribe.astro';
 import { site } from '../config/site';
 import { getSections, getVisibleEntries, entriesInSection, pad2, revString, type Section } from '../lib/content';
 
@@ -82,5 +83,19 @@ const groups = [
         </Fragment>
       ))
     }
+
+    <section class="home-brief">
+      <Subscribe
+        heading="The Brief"
+        valueProp="A weekly, plain-English read on CMMC and defense compliance. Launching soon."
+      />
+    </section>
   </main>
 </Base>
+
+<style>
+  /* Spacing only for the homepage subscribe module. No design tokens added. */
+  .home-brief {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+</style>

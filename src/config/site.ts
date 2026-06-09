@@ -42,6 +42,13 @@ export interface SiteIdentity {
     github: string;
     substack: string;
   };
+  /**
+   * Newsletter signup via Buttondown's PUBLIC embed endpoint. This is the
+   * public username only, never the secret API key, so it is safe in the repo.
+   */
+  newsletter: {
+    buttondownUsername: string;
+  };
 }
 
 export const site: SiteIdentity = {
@@ -57,5 +64,9 @@ export const site: SiteIdentity = {
   links: {
     github: '', // TODO: set when the public repo URL exists (Phase 4)
     substack: '', // TODO: set if/when a top-level Substack link is wanted
+  },
+  newsletter: {
+    // PUBLIC Buttondown username (not the API key), safe in the repo.
+    buttondownUsername: 'technically-acceptable',
   },
 };
